@@ -46,6 +46,11 @@ class UserProfile(models.Model):
 
 class Genre(models.Model):
     name = models.CharField(max_length=50)
+    slug = models.SlugField(unique=True, default='')
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super(Genre, self).save(*args, **kwargs)
 
 
 class Movie(models.Model):
@@ -54,7 +59,7 @@ class Movie(models.Model):
     name = models.CharField(max_length=150)
     description = models.CharField(max_length=1000)
     pic_url = models.CharField(max_length=200)
-    release_data = models.DateTimeField()
+    release_date = models.DateTimeField()
     rating = models.FloatField(default=-1)
 
 
