@@ -53,7 +53,7 @@ class Movie(models.Model):
     imdb_id = models.CharField(max_length=10)
     name = models.CharField(max_length=150)
     description = models.CharField(max_length=1000)
-    pic_url = models.CharField(200)
+    pic_url = models.CharField(max_length=200)
     release_data = models.DateTimeField()
     rating = models.FloatField(default=-1)
 
