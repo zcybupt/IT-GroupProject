@@ -54,18 +54,19 @@ class Genre(models.Model):
 
 
 class Movie(models.Model):
-    genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
+    genres = models.CharField(max_length=100)
     imdb_id = models.CharField(max_length=10)
     name = models.CharField(max_length=150)
     description = models.CharField(max_length=1000)
     pic_url = models.CharField(max_length=200)
-    release_date = models.DateTimeField()
+    release_year = models.IntegerField()
     rating = models.FloatField(default=-1)
 
 
 class Review(models.Model):
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    title = models.CharField(max_length=200)
     content = models.TextField(max_length=5000)
     time = models.DateTimeField()
     likes = models.IntegerField(default=0)
