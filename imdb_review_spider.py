@@ -116,7 +116,7 @@ def get_movie_info(imdb_id: str, times: int = 3) -> dict:
         'name': name,
         'description': description,
         'pic_url': pic_url,
-        'release_date': release_year,
+        'release_year': release_year,
         'rating': rating,
     }
 
