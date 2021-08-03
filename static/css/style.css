@@ -51,3 +51,33 @@ body {
     margin-bottom: 10px;
     height: auto;
 }
+
+.movie-list {
+    width: 70%;
+    margin: 20px auto;
+}
+
+.movie-list .display-4 {
+    margin-bottom: 20px;
+}
+
+.movie-list .card-deck {
+    margin-bottom: 20px;
+}
+
+.movie-list .card-img-top {
+    width: 256px;
+    height: 380px;
+    object-fit: cover;
+}
+
+.movie-list .rating {
+    color: gold;
+    font-style: italic;
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.3), rgba(0,0,0,0));
+    width: 100%;
+    font-size: 40px;
+    line-height: 50px;
+    position: absolute;
+    padding-left: 10px;
+}

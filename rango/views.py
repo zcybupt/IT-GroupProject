@@ -1,10 +1,11 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from rango.forms import CategoryForm, PageForm, UserForm, UserProfileForm
-from rango.models import Category, Page
+from rango.models import Category, Page, Genre, Movie, Review
 
 from datetime import datetime
 
@@ -65,8 +66,10 @@ def add_category(request):
 
 @login_required
 def add_page(request, category_name_slug):
-    try: category = Category.objects.get(slug=category_name_slug)
-    except: category = None
+    try:
+        category = Category.objects.get(slug=category_name_slug)
+    except:
+        category = None
 
     if not category: return redirect('/rango/')
 
@@ -176,3 +179,18 @@ def visitor_cookie_handler(request):
         request.session['last_visit'] = last_visit_cookie
 
     request.session['visits'] = visits
+
+
+def get_top_movies(request, page=1):
+    all_movies = Movie.objects.filter().order_by('-rating')
+    p = Paginator(all_movies, 15)
+    cur_page = p.page(page)
+
+    movie_list = [cur_page[i:i + 5] for i in range(0, len(cur_page), 5)]
+
+    return render(request, 'rango/movie.html', context={
+        'movie_list': movie_list,
+        'current_page': page,
+        'page_list': range(page - 1, page + 2) if page != 1 else [1, 2, 3],
+        'total_page': p.count,
+    })
