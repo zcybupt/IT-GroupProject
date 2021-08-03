@@ -74,7 +74,7 @@ def get_review_dict(imdb_id: str) -> dict:
         _, user, review_time, _ = review_container.xpath('.//div[@class="display-name-date"]//text()')
         title = review_container.xpath('.//a[@class="title"]/text()')[0].strip()
         content = review_container.xpath('.//div[@class="content"]/div[1]/text()')
-        content = '\n'.join(content) if len(content) > 1 else content
+        content = '\n'.join(content) if len(content) > 1 else content[0]
         likes_text = review_container.xpath('.//div[@class="content"]/div[2]/text()')[0].strip()
         likes, _ = re.findall('[\d,]+', likes_text)
 
