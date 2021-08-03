@@ -1,10 +1,56 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'rango/base.html' %}
+{% load staticfiles %}
+
+{% block body_block %}
+
+  <div class="movie-list">
+    <h1 class="display-4">TOP 250 MOVIES</h1>
+
+    {% for row in movie_list %}
+      <div class="card-deck">
+        {% for movie in row %}
+          <div class="card">
+            <img class="card-img-top" src="{{ MEDIA_URL}}movie_covers/{{ movie.imdb_id }}.jpg" alt="Card image cap">
+            <span class="rating">{{ movie.rating }}</span>
+            <div class="card-body">
+              <a class="card-title" href="#">{{ movie.name }}</a>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% endfor %}
+
+    <nav>
+      <ul class="pagination justify-content-end">
+        {% if current_page == 1 %}
+          <li class="page-item disabled">
+            <a class="page-link" href="#" aria-disabled="true">Previous</a>
+          </li>
+        {% else %}
+          <li class="page-item">
+            <a class="page-link" href="{% url 'rango:top_movies' current_page|add:-1 %}">Previous</a>
+          </li>
+        {% endif %}
+
+        {% for i in page_list %}
+          {% if i == current_page %}
+            <li class="page-item  active"><a class="page-link" href="#">{{ i }}</a></li>
+          {% else %}
+            <li class="page-item"><a class="page-link" href="{% url 'rango:top_movies' i %}">{{ i }}</a></li>
+          {% endif %}
+        {% endfor %}
+
+        {% if current_page == total_page %}
+          <li class="page-item disabled">
+            <a class="page-link" aria-disabled="true" href="#">Next</a>
+          </li>
+        {% else %}
+          <li class="page-item">
+            <a class="page-link" href="{% url 'rango:top_movies' current_page|add:1 %}">Next</a>
+          </li>
+        {% endif %}
+      </ul>
+    </nav>
+  </div>
+
+{% endblock %}

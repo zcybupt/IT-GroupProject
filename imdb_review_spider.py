@@ -1,4 +1,5 @@
 import json
+import os
 import re
 import time
 
@@ -45,23 +46,23 @@ i = IMDb()
 i.set_proxy(proxy)
 
 
-def get_resource_with_retry(imdb_id: str, times: int = 3) -> Response:
+def get_resource_with_retry(url: str, times: int = 3) -> Response:
     if times == 0:
         res = Response()
         res.status_code = 500
         return res
 
     try:
-        res = requests.get(review_url % imdb_id, proxies=proxies)
+        res = requests.get(url, proxies=proxies)
         return res
     except Exception:
-        print('Failed to retrieve %s. Retry after 5s' % imdb_id)
+        print('Failed to retrieve %s. Retry after 5s' % url)
         time.sleep(5)
-        return get_resource_with_retry(imdb_id, times - 1)
+        return get_resource_with_retry(url, times - 1)
 
 
 def get_review_dict(imdb_id: str) -> dict:
-    res = get_resource_with_retry(imdb_id)
+    res = get_resource_with_retry(review_url % imdb_id)
     if not res or res.status_code != 200:
         print('Failed to retrieve review: %s.' % imdb_id)
         return
@@ -139,5 +140,23 @@ def save_reviews_as_json() -> None:
             f.write(json_str + '\n')
 
 
+def download_covers() -> None:
+    if not os.path.exists('media/movie_covers'):
+        os.makedirs('media/movie_covers')
+
+    with open('imdb_top250.json', 'r') as f:
+        for line in f:
+            jo = json.loads(line)
+            imdb_id = jo.get('imdb_id')
+            pic_url = jo.get('pic_url')
+
+            print('crawling: %s' % imdb_id)
+            res = get_resource_with_retry(pic_url)
+
+            with open('media/movie_covers/%s.jpg' % imdb_id, 'wb') as p:
+                p.write(res.content)
+
+
 if __name__ == '__main__':
-    save_reviews_as_json()
+    # save_reviews_as_json()
+    download_covers()
