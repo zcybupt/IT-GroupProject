@@ -10,10 +10,10 @@
       <div class="card-deck">
         {% for movie in row %}
           <div class="card">
-            <img class="card-img-top" src="{{ movie.pic_url }}" alt="Card image cap">
+            <img class="card-img-top" src="{% static 'images/rango.jpg' %}" alt="Card image cap">
             <span class="rating">{{ movie.rating }}</span>
             <div class="card-body">
-              <a class="display-5" href="">{{ movie.name }}</a>
+              <a class="card-title" href="#">{{ movie.name }}</a>
             </div>
           </div>
         {% endfor %}
