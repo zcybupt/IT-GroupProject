@@ -20,7 +20,7 @@ urlpatterns = [
     path('movies/search/', views.search_movies, name='movie_search'),
     path('movies/search/<str:keyword>/', views.search_more_movies, name='movie_search'),
     path('movies/search/<str:keyword>/<int:page>', views.search_more_movies, name='movie_search'),
-    path('genres/', views.get_movies_by_genre, name='movie_search'),
-    path('genres/<str:genre>/', views.get_movies_by_genre, name='movie_search'),
-    path('genres/<str:genre>/<int:page>', views.get_movies_by_genre, name='movie_search'),
+    path('genres/', views.get_movies_by_genre, name='genres'),
+    path('genres/<str:genre>/', views.get_movies_by_genre, name='genres'),
+    path('genres/<str:genre>/<int:page>', views.get_movies_by_genre, name='genres'),
 ]
