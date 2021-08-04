@@ -15,4 +15,6 @@ urlpatterns = [
     path('logout/', views.user_logout, name='logout'),
     path('movies/top/', views.get_top_movies, name='top_movies'),
     path('movies/top/<int:page>', views.get_top_movies, name='top_movies'),
+    path('movies/latest/', views.get_latest_movies, name='latest_movies'),
+    path('movies/latest/<int:page>', views.get_latest_movies, name='latest_movies'),
 ]

@@ -189,6 +189,23 @@ def get_top_movies(request, page=1):
     movie_list = [cur_page[i:i + 5] for i in range(0, len(cur_page), 5)]
 
     return render(request, 'rango/movie.html', context={
+        'list_title': 'TOP 250 MOVIES',
+        'movie_list': movie_list,
+        'current_page': page,
+        'page_list': range(page - 1, page + 2) if page != 1 else [1, 2, 3],
+        'total_page': p.count,
+    })
+
+
+def get_latest_movies(request, page=1):
+    all_movies = Movie.objects.filter().order_by('-release_year')
+    p = Paginator(all_movies, 15)
+    cur_page = p.page(page)
+
+    movie_list = [cur_page[i:i + 5] for i in range(0, len(cur_page), 5)]
+
+    return render(request, 'rango/movie.html', context={
+        'list_title': 'LATEST MOVIES',
         'movie_list': movie_list,
         'current_page': page,
         'page_list': range(page - 1, page + 2) if page != 1 else [1, 2, 3],
