@@ -1,3 +1,5 @@
+import re
+
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
@@ -181,33 +183,52 @@ def visitor_cookie_handler(request):
     request.session['visits'] = visits
 
 
-def get_top_movies(request, page=1):
-    all_movies = Movie.objects.filter().order_by('-rating')
-    p = Paginator(all_movies, 15)
-    cur_page = p.page(page)
+def get_movie_list_response(request, data_list, page, list_title, url_prefix=None):
+    p = Paginator(data_list, 12)
+    movie_page = p.page(page)
 
-    movie_list = [cur_page[i:i + 5] for i in range(0, len(cur_page), 5)]
+    if not url_prefix:
+        url_prefix = re.findall('(.*/)\d+', request.path)
+        url_prefix = url_prefix[0] if url_prefix else request.path
+
+    if p.num_pages > 11:
+        if page + 5 > p.num_pages:
+            page_range = range(p.num_pages - 10, p.num_pages + 1)
+        elif page - 5 < 1:
+            page_range = range(1, 12)
+        else:
+            page_range = range(page - 5, page + 5 + 1)
+    else:
+        page_range = p.page_range
 
     return render(request, 'rango/movie.html', context={
-        'list_title': 'TOP 250 MOVIES',
-        'movie_list': movie_list,
+        'list_title': list_title,
+        'movie_page': movie_page,
+        'page_range': page_range,
         'current_page': page,
-        'page_list': range(page - 1, page + 2) if page != 1 else [1, 2, 3],
-        'total_page': p.count,
+        'url_prefix': url_prefix
     })
+
+
+def get_top_movies(request, page=1):
+    all_movies = Movie.objects.filter().order_by('-rating')
+    return get_movie_list_response(request, all_movies, page, 'TOP 250 MOVIES')
 
 
 def get_latest_movies(request, page=1):
     all_movies = Movie.objects.filter().order_by('-release_year')
-    p = Paginator(all_movies, 15)
-    cur_page = p.page(page)
+    return get_movie_list_response(request, all_movies, page, 'LATEST MOVIES')
 
-    movie_list = [cur_page[i:i + 5] for i in range(0, len(cur_page), 5)]
 
-    return render(request, 'rango/movie.html', context={
-        'list_title': 'LATEST MOVIES',
-        'movie_list': movie_list,
-        'current_page': page,
-        'page_list': range(page - 1, page + 2) if page != 1 else [1, 2, 3],
-        'total_page': p.count,
-    })
+def search_movies(request):
+    keyword = request.GET.get('keyword')
+
+    results = Movie.objects.filter(name__icontains=keyword).order_by('-rating')
+
+    return get_movie_list_response(request, results, 1, 'RELATED MOVIES', request.path + keyword + '/')
+
+
+def search_more_movies(request, keyword, page=1):
+    results = Movie.objects.filter(name__icontains=keyword).order_by('-rating')
+
+    return get_movie_list_response(request, results, page, 'RELATED MOVIES')
