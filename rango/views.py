@@ -1,10 +1,13 @@
+import re
+
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from rango.forms import CategoryForm, PageForm, UserForm, UserProfileForm
-from rango.models import Category, Page
+from rango.models import Category, Page, Genre, Movie, Review
 
 from datetime import datetime
 
@@ -65,8 +68,10 @@ def add_category(request):
 
 @login_required
 def add_page(request, category_name_slug):
-    try: category = Category.objects.get(slug=category_name_slug)
-    except: category = None
+    try:
+        category = Category.objects.get(slug=category_name_slug)
+    except:
+        category = None
 
     if not category: return redirect('/rango/')
 
@@ -176,3 +181,60 @@ def visitor_cookie_handler(request):
         request.session['last_visit'] = last_visit_cookie
 
     request.session['visits'] = visits
+
+
+def get_movie_list_response(request, data_list, page, list_title, url_prefix=None):
+    p = Paginator(data_list, 12)
+    movie_page = p.page(page)
+
+    if not url_prefix:
+        url_prefix = re.findall('(.*/)\d+', request.path)
+        url_prefix = url_prefix[0] if url_prefix else request.path
+
+    if p.num_pages > 11:
+        if page + 5 > p.num_pages:
+            page_range = range(p.num_pages - 10, p.num_pages + 1)
+        elif page - 5 < 1:
+            page_range = range(1, 12)
+        else:
+            page_range = range(page - 5, page + 5 + 1)
+    else:
+        page_range = p.page_range
+
+    return render(request, 'rango/movie.html', context={
+        'list_title': list_title,
+        'movie_page': movie_page,
+        'page_range': page_range,
+        'current_page': page,
+        'url_prefix': url_prefix
+    })
+
+
+def get_top_movies(request, page=1):
+    all_movies = Movie.objects.filter().order_by('-rating')
+    return get_movie_list_response(request, all_movies, page, 'TOP 250 MOVIES')
+
+
+def get_latest_movies(request, page=1):
+    all_movies = Movie.objects.filter().order_by('-release_year')
+    return get_movie_list_response(request, all_movies, page, 'LATEST MOVIES')
+
+
+def search_movies(request):
+    keyword = request.GET.get('keyword')
+
+    results = Movie.objects.filter(name__icontains=keyword).order_by('-rating')
+
+    return get_movie_list_response(request, results, 1, 'RELATED MOVIES', request.path + keyword + '/')
+
+
+def search_more_movies(request, keyword, page=1):
+    results = Movie.objects.filter(name__icontains=keyword).order_by('-rating')
+
+    return get_movie_list_response(request, results, page, 'RELATED MOVIES')
+
+
+def get_movies_by_genre(request, genre, page=1):
+    movie_list = Movie.objects.filter(genres__contains=genre).order_by('-rating')
+
+    return get_movie_list_response(request, movie_list, page, genre.upper() + ' MOVIES')

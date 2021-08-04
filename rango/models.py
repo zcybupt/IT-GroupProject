@@ -46,22 +46,28 @@ class UserProfile(models.Model):
 
 class Genre(models.Model):
     name = models.CharField(max_length=50)
+    slug = models.SlugField(unique=True, default='')
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super(Genre, self).save(*args, **kwargs)
 
 
 class Movie(models.Model):
-    genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
+    genres = models.CharField(max_length=100)
     imdb_id = models.CharField(max_length=10)
     name = models.CharField(max_length=150)
     description = models.CharField(max_length=1000)
     pic_url = models.CharField(max_length=200)
-    release_data = models.DateTimeField()
+    release_year = models.IntegerField(null=True)
     rating = models.FloatField(default=-1)
 
 
 class Review(models.Model):
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    title = models.CharField(max_length=200)
     content = models.TextField(max_length=5000)
-    time = models.DateTimeField()
+    time = models.DateTimeField(null=True)
     likes = models.IntegerField(default=0)
     rating = models.FloatField(default=0)
