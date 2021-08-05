@@ -22,7 +22,10 @@ function like(reviewId) {
     let likeEle = $('#' + reviewId);
     let likedReviews = localStorage.getItem("likedReviews");
 
-    if (likedReviews && likedReviews.indexOf(reviewId) > -1) {return;}
+    if (likedReviews) {
+      let likedReviewList = likedReviews.split(",");
+      if (likedReviewList.indexOf(String(reviewId)) > -1) return;
+    }
 
     $.ajax({
       url: '/rango/reviews/like/',
@@ -77,7 +80,32 @@ function postComment(movieId) {
     dataType: "json",
     success: function (data) {
       if (data["success"]) {
-        console.log(data);
+        let newComment = '<div class="review-item">'
+        +  '<div class="d-flex">'
+        +    '<div class="short-content pl-4">'
+        +      '<h5>'
+        +        '<i class="fa fa-user"></i>'
+        +        '<span>&nbsp' + data["username"] + '</span>'
+        +        '<span class="ml-3 cr1">&nbsp' + data["rating"] + '</span>'
+        +        '<span class="ml-3 time">Just now</span>'
+        +      '<h5>'
+        +      '<h4 class="cr1">' + titleBox.val() + '</h4>'
+        +      '<div class="more">'
+        +        '<div class="text-wrap">'
+        +          '<div class="text">' + textBox.val() + '<div>'
+        +        '<div>'
+        +        '<div class="response">'
+        +          '<a class="fabulous"  onClick="like(' + data["review_id"] + ')" href="javascript:void(0)">'
+        +            '<i class="fa fa-thumbs-o-up" style="font-family: FontAwesome;"></i>'
+        +            '<span id="' + data["review_id"] + '">0</span>'
+        +          '<a>'
+        +        '<div>'
+        +      '<div>'
+        +    '<div>'
+        +  '<div>'
+        +'<div>'
+
+        $(newComment).prependTo('.review');
       } else {
         if (data["msg"] === "login required") {
           window.location = "/rango/login";
