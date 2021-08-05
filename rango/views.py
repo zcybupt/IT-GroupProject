@@ -263,3 +263,35 @@ def get_movies_by_genre(request, genre=None, page=1):
     movie_list = Movie.objects.filter(genres__contains=genre).order_by('-rating')
 
     return get_movie_list_response(request, movie_list, page, genre.upper() + ' MOVIES')
+
+
+def get_review_list_response(request, data_list, page, url_prefix=None):
+    p = Paginator(data_list, 12)
+    review_page = p.page(page)
+
+    if not url_prefix:
+        url_prefix = re.findall('(.*/)\d+', request.path)
+        url_prefix = url_prefix[0] if url_prefix else request.path
+
+    if p.num_pages > 11:
+        if page + 5 > p.num_pages:
+            page_range = range(p.num_pages - 10, p.num_pages + 1)
+        elif page - 5 < 1:
+            page_range = range(1, 12)
+        else:
+            page_range = range(page - 5, page + 5 + 1)
+    else:
+        page_range = p.page_range
+
+
+    return render(request, 'rango/reviews.html', context={
+        'review_page': review_page,
+        'page_range': page_range,
+        'current_page': page,
+        'url_prefix': url_prefix
+    })
+
+
+def get_popular_reviews(request, page=1):
+    all_reviews = Review.objects.filter().order_by('-likes')
+    return get_review_list_response(request, all_reviews, page)
