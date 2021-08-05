@@ -12,7 +12,7 @@ from rango.models import Genre, Movie, Review, UserProfile
 
 genres = [
     'Action', 'Adventure', 'Animation', 'Biography', 'Comedy', 'Crime', 'Documentary', 'Drama', 'Family', 'Fantasy',
-    'Film Noir', 'History', 'Horror', 'Music', 'Musical', 'Mystery', 'Romance', 'Sci-Fi', 'Short Film', 'Sport',
+    'Film Noir', 'History', 'Horror', 'Music', 'Musical', 'Mystery', 'Romance', 'Sci-Fi', 'Sport',
     'Superhero', 'Thriller', 'War', 'Western'
 ]
 
@@ -23,11 +23,16 @@ def add_genre(name):
     return genre
 
 
-def add_movie(genres, imdb_id, name, description, pic_url, release_year, rating):
+def add_movie(genres, imdb_id, name, runtime, countries, directors, actors,
+              description, pic_url, release_year, rating):
     movie = Movie.objects.get_or_create(imdb_id=imdb_id)[0]
     movie.genres = ''.join(genres)
     movie.imdb_id = imdb_id
     movie.name = name
+    movie.runtime = runtime
+    movie.countries = ' / '.join(countries)
+    movie.directors = ' / '.join(directors)
+    movie.actors = ' / '.join(actors)
     movie.description = description
     movie.pic_url = pic_url
     movie.release_year = release_year
@@ -73,6 +78,10 @@ def populate_data():
                 genres=','.join(jo.get('genres')),
                 imdb_id=jo.get('imdb_id'),
                 name=jo.get('name'),
+                runtime=jo.get('runtime')[0],
+                countries=jo.get('countries'),
+                directors=jo.get('directors'),
+                actors=jo.get('actors'),
                 description=jo.get('description'),
                 pic_url=jo.get('pic_url'),
                 release_year=jo.get('release_year'),

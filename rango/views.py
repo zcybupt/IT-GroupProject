@@ -1,3 +1,6 @@
+import json
+import re
+
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
@@ -11,18 +14,14 @@ from datetime import datetime
 
 
 def index(request):
-    category_list = Category.objects.order_by('-likes')[:5]
-    page_list = Page.objects.order_by('-views')[:5]
+    carousel_movies = Movie.objects.all().order_by('-rating')[:5]
 
-    context_dict = {
-        'boldmessage': 'Crunchy, creamy, cookie, candy, cupcake!',
-        'categories': category_list,
-        'pages': page_list
-    }
+    editor_picks = Movie.objects.all().order_by('-release_year')[:6]
 
-    visitor_cookie_handler(request)
-
-    return render(request, 'rango/index.html', context=context_dict)
+    return render(request, 'rango/index.html', context={
+        'carousel_movies': carousel_movies,
+        'editor_picks': editor_picks
+    })
 
 
 def about(request):
@@ -181,16 +180,136 @@ def visitor_cookie_handler(request):
     request.session['visits'] = visits
 
 
-def get_top_movies(request, page=1):
-    all_movies = Movie.objects.filter().order_by('-rating')
-    p = Paginator(all_movies, 15)
-    cur_page = p.page(page)
+def get_movie_list_response(request, data_list, page, list_title, url_prefix=None):
+    p = Paginator(data_list, 12)
+    movie_page = p.page(page)
 
-    movie_list = [cur_page[i:i + 5] for i in range(0, len(cur_page), 5)]
+    if not url_prefix:
+        url_prefix = re.findall('(.*/)\d+', request.path)
+        url_prefix = url_prefix[0] if url_prefix else request.path
+
+    if p.num_pages > 11:
+        if page + 5 > p.num_pages:
+            page_range = range(p.num_pages - 10, p.num_pages + 1)
+        elif page - 5 < 1:
+            page_range = range(1, 12)
+        else:
+            page_range = range(page - 5, page + 5 + 1)
+    else:
+        page_range = p.page_range
 
     return render(request, 'rango/movie.html', context={
-        'movie_list': movie_list,
+        'list_title': list_title,
+        'movie_page': movie_page,
+        'page_range': page_range,
         'current_page': page,
-        'page_list': range(page - 1, page + 2) if page != 1 else [1, 2, 3],
-        'total_page': p.count,
+        'url_prefix': url_prefix
     })
+
+
+def get_movie(request, movie_id):
+    movie = Movie.objects.get(id=movie_id)
+    reviews = Review.objects.filter(movie=movie)
+
+    genres = movie.genres.split(',')
+    countries = movie.countries.replace(',', '/')
+    directors = movie.directors.replace(',', '/')
+    actors = movie.actors.replace(',', '/')
+
+    return render(request, 'rango/movie_detail.html', context={
+        'movie': movie,
+        'genres': genres,
+        'countries': countries,
+        'directors': directors,
+        'actors': actors,
+        'reviews': reviews
+    })
+
+
+def get_top_movies(request, page=1):
+    all_movies = Movie.objects.filter().order_by('-rating')
+    return get_movie_list_response(request, all_movies, page, 'TOP 250 MOVIES')
+
+
+def get_latest_movies(request, page=1):
+    all_movies = Movie.objects.filter().order_by('-release_year')
+    return get_movie_list_response(request, all_movies, page, 'LATEST MOVIES')
+
+
+def search_movies(request):
+    keyword = request.GET.get('keyword')
+
+    results = Movie.objects.filter(name__icontains=keyword).order_by('-rating')
+
+    return get_movie_list_response(request, results, 1, 'RELATED MOVIES', request.path + keyword + '/')
+
+
+def search_more_movies(request, keyword, page=1):
+    results = Movie.objects.filter(name__icontains=keyword).order_by('-rating')
+
+    return get_movie_list_response(request, results, page, 'RELATED MOVIES')
+
+
+def get_movies_by_genre(request, genre=None, page=1):
+    if not genre:
+        genres = Genre.objects.all()
+
+        return render(request, 'rango/genres.html', context={'genres': genres})
+
+    movie_list = Movie.objects.filter(genres__contains=genre).order_by('-rating')
+
+    return get_movie_list_response(request, movie_list, page, genre.upper() + ' MOVIES')
+
+
+def get_review_list_response(request, data_list, page, url_prefix=None):
+    p = Paginator(data_list, 12)
+    review_page = p.page(page)
+
+    if not url_prefix:
+        url_prefix = re.findall('(.*/)\d+', request.path)
+        url_prefix = url_prefix[0] if url_prefix else request.path
+
+    if p.num_pages > 11:
+        if page + 5 > p.num_pages:
+            page_range = range(p.num_pages - 10, p.num_pages + 1)
+        elif page - 5 < 1:
+            page_range = range(1, 12)
+        else:
+            page_range = range(page - 5, page + 5 + 1)
+    else:
+        page_range = p.page_range
+
+    return render(request, 'rango/reviews.html', context={
+        'review_page': review_page,
+        'page_range': page_range,
+        'current_page': page,
+        'url_prefix': url_prefix
+    })
+
+
+def get_popular_reviews(request, page=1):
+    all_reviews = Review.objects.filter().order_by('-likes').filter()
+    return get_review_list_response(request, all_reviews, page)
+
+
+def like_review(request):
+    if request.method == 'POST' and request.body:
+        data = json.loads(request.body)
+        review_id = data.get('review_id')
+
+        review = Review.objects.get(id=review_id)
+        review.likes = review.likes + 1
+        review.save()
+
+        return HttpResponse(
+            json.dumps({
+                'success': True,
+                'likes': review.likes
+            }),
+            content_type='application/json'
+        )
+    else:
+        return HttpResponse(
+            json.dumps({'success': False}),
+            content_type='application/json'
+        )

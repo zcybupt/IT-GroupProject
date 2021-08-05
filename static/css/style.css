@@ -3,6 +3,54 @@ body {
     height: 100%;
 }
 
+.index-body {
+    width: 70%;
+    overflow: hidden;
+    margin: 20px auto;
+}
+
+.index-title {
+    padding-top: 120px;
+}
+
+.carousel:hover {
+    cursor: pointer;
+}
+
+.carousel-inner img {
+    width: 300px;
+    height: 600px;
+    object-fit: cover;
+}
+
+.editor-title {
+    margin-top: 30px;
+}
+
+.editor-picks {
+    padding: 20px;
+}
+
+.editor-picks .card {
+    width: 100%;
+    height: 400px;
+    margin-top: 20px;
+    margin-right: 5px;
+    transition: all 0.3s;
+    overflow: hidden;
+}
+
+.editor-picks .card:hover {
+    transform: scale(1.05);
+    cursor: pointer;
+}
+
+.editor-picks .card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
 .form-signin {
     padding: 200px 15px;
     width: 100%;
@@ -57,43 +105,261 @@ body {
     height: auto;
 }
 
+*,
+*:after,
+*:before {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.clearfix:before,
+.clearfix:after {
+    content: " ";
+    display: table;
+}
+
+.clearfix:after {
+    clear: both;
+}
+
 .movie-list {
     width: 70%;
     margin: 20px auto;
 }
 
-.movie-list .display-4 {
-    margin-bottom: 20px;
+.movie-grid {
+    font-family: 'Open Sans', sans-serif;
+    text-align: center;
 }
 
-.movie-list .card-deck {
-    margin-bottom: 20px;
+.movie-grid .movie-image {
+    position: relative;
+    overflow: hidden;
 }
 
-.movie-list .card-img-top {
+.movie-grid .movie-image a.image {
+    display: block;
+}
+
+.movie-grid .movie-image img {
+    display: block;
     width: 100%;
-    height: 85%;
+    height: 400px;
     object-fit: cover;
+    transition: all 0.3s;
 }
 
-.movie-list .rating {
-    color: gold;
-    font-style: italic;
-    background: linear-gradient(to right, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0));
-    width: 100%;
-    font-size: 40px;
-    line-height: 50px;
+.movie-grid .movie-image:hover img {
+    transform: scale(1.05);
+}
+
+.movie-grid .movie-new-label {
+    color: #fff;
+    background: #cd1b29;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    padding: 3px 10px 10px;
     position: absolute;
-    padding-left: 10px;
+    top: 0;
+    left: 0;
+    clip-path: polygon(0 0, 100% 0, 100% 75%, 15% 75%, 0 100%, 0% 25%);
 }
 
-.movie-list .card {
-    height: 600px;
+.movie-grid .movie-content {
+    width: 100%;
+    padding: 12px 0;
+    display: inline-block;
 }
 
-.movie-list .card-title {
+.movie-grid .title {
+    margin: 0 0 7px;
+    font-size: 16px;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.movie-grid .title a {
+    color: #000;
+    transition: all 0.4s ease-out;
+}
+
+.movie-grid .title a:hover {
+    color: #033772;
+}
+
+.movie-grid .grid-info {
+    position: absolute;
+    width: 100%;
+    height: 30px;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.movie-grid .grid-info .rating {
+    position: absolute;
+    bottom: 5px;
+    left: 10px;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    display: inline-block;
+    float: left;
+}
+
+.movie-grid .rating li {
+    color: #ffc500;
+    font-size: 13px;
+}
+
+.movie-grid .grid-info .rating li.far {
+    color: #bababa;
+}
+
+.movie-grid .grid-info .add-to-myList {
+    position: absolute;
+    right: 10px;
+    bottom: 5px;
+    float: right;
+    color: white;
+}
+
+@media only screen and (max-width: 990px) {
+    .movie-grid {
+        margin: 0 0 30px;
+    }
+}
+
+.movie-info {
+    width: 70%;
+    overflow: hidden;
+    margin: 20px auto;
+}
+
+.movie-info .poster {
+    width: 100%;
+    margin-top: 7px;
+}
+
+.genres-bar {
+    padding: 0;
+}
+
+.genres-bar .genre {
     text-decoration: none;
-    font-size: 18px;
-    color: black;
-    font-weight: bold;
+    font-size: 20px;
+    color: white;
+}
+
+.genre-list {
+    width: 70%;
+    overflow: hidden;
+    margin: 20px auto;
+}
+
+.genre-list .genre-grid {
+    margin: 10px 10px;
+}
+
+.genre-list .genre-image img {
+    display: block;
+    width: 100%;
+    height: 150px;
+    border-radius: 10px;
+    object-fit: cover;
+    transition: all 0.3s;
+}
+
+.genre-list .genre-image:hover img {
+    transform: scale(1.05);
+}
+
+.genre-list .genre-content {
+    position: absolute;
+    top: 115px;
+    left: 40px;
+}
+
+.genre-list .genre-content a {
+    text-decoration: none;
+    color: white;
+}
+
+.review-body {
+    width: 60%;
+    overflow: hidden;
+    margin: 20px auto;
+}
+
+.review {
+    padding: 20px 0;
+}
+
+.review .cr1 {
+    color: lightslategray;
+}
+
+.review .cr2 {
+    color: moccasin;
+}
+
+.review .fa-star {
+    color: #ddd;
+}
+
+.review .review-item {
+    border-top: 1px solid #ddd;
+    padding: 20px 0;
+}
+
+.review .title {
+    font-size: 20px;
+    color: dimgrey;
+}
+
+.review .review-item img {
+    max-width: 150px;
+}
+
+.review .review-item .short-content .more .text-wrap {
+    position: relative;
+}
+
+.review .review-item .short-content .more .text-wrap.maxHeight .text {
+    max-height: 200px;
+}
+
+.review .review-item .short-content .more .text-wrap .text {
+    overflow: hidden;
+    font-size: 14px;
+    line-height: 25px;
+}
+
+.review .review-item .short-content .more .text-wrap .unfold,
+.review .review-item .short-content .more .text-wrap .put {
+    position: absolute;
+    right: 0;
+    bottom: -20px;
+}
+
+.review .review-item .short-content .more .text-wrap .put {
+    display: none;
+}
+
+.review .review-item .short-content .more .fabulous {
+    display: inline-block;
+    margin: 10px 0;
+    padding: 5px 10px;
+    background-color: #f0f7f9;
+    color: #3377aa;
+}
+
+.review .time {
+    color: #999;
+    font-size: 12px;
+}
+
+.review a:hover {
+    text-decoration: none;
 }

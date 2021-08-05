@@ -1,0 +1,73 @@
+{% extends 'rango/base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+  {{ movie.name }}
+{% endblock %}
+
+{% block body_block %}
+  <div class="movie-info">
+    <h1 class="display-4">{{ movie.name }}</h1>
+
+    <div class="row">
+      <div class="col-md-4">
+        <img src="{{ MEDIA_URL }}movie_covers/{{ movie.imdb_id }}.jpg" alt="" class="poster">
+      </div>
+
+      <div class="col-md-8">
+        <ul class="genres-bar">
+          {% for genre in genres %}
+            <a href="{% url 'rango:genres' %}{{ genre }}" class="genre">
+              <span class="badge rounded-pill bg-primary">{{ genre }}</span>
+            </a>
+          {% endfor %}
+        </ul>
+
+        <div class="list-group">
+          <a href="#" class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1">Actors</h5>
+            </div>
+            <p class="mb-1">{{ actors }}</p>
+          </a>
+          <a href="#" class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1">Directors</h5>
+            </div>
+            <p class="mb-1">{{ directors }}</p>
+          </a>
+          <a href="#" class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1">Countries</h5>
+            </div>
+            <p class="mb-1">{{ countries }}</p>
+          </a>
+          <a href="#" class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1">Runtime</h5>
+            </div>
+            <p class="mb-1">{{ movie.runtime }} minutes</p>
+          </a>
+          <a href="#" class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1">Plot</h5>
+            </div>
+            <p class="mb-1">{{ movie.description }}</p>
+          </a>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="row reviews">
+      <ul>
+        {% for review in reviews %}
+          <li>{{ review.content }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <div class="row movie-review">
+  </div>
+{% endblock %}
