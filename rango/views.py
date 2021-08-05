@@ -240,13 +240,12 @@ def add_movie_review(request, movie_id):
 
     if request.method == 'POST' and request.body:
         data = json.loads(request.body)
-        print(data)
-
         movie = Movie.objects.get(id=movie_id)
 
         title = data.get('title')
         content = data.get('content')
         rating = data.get('rating')
+        review_time = datetime.now(tz=timezone.utc)
 
         rating = 2 * int(re.findall('\d', rating)[0])
 
@@ -255,7 +254,7 @@ def add_movie_review(request, movie_id):
             user=request.user,
             title=title,
             content=content,
-            time=datetime.now(tz=timezone.utc),
+            time=review_time,
             likes=0,
             rating=rating
         )
@@ -265,7 +264,10 @@ def add_movie_review(request, movie_id):
         return HttpResponse(
             json.dumps({
                 'success': True,
-                'likes': review.likes
+                'review_id': review.id,
+                'rating': rating,
+                'review_time': str(review_time),
+                'username': request.user.username
             }),
             content_type='application/json'
         )
