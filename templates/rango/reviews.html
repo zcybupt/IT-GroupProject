@@ -2,7 +2,7 @@
 {% load staticfiles %}
 
 {% block title_block %}
-  Popular Reviews
+  {{ list_title }}
 {% endblock %}
 
 {% block js_block %}
@@ -11,20 +11,20 @@
 
 {% block body_block %}
   <div class="review-body">
-    <div class="display-4">Popular Reviews</div>
+    <div class="display-4">{{ list_title }}</div>
 
     {% if review_page %}
       <div class="container review">
-      {% for review in review_page %}
-        <div class="review-item">
-          <div class="d-flex">
-            <div class="film">
-              <img class="" src="{{ MEDIA_URL }}movie_covers/{{ review.movie.imdb_id }}.jpg" alt="movie cover">
-            </div>
-            <div class="short-content pl-4">
-              <h5>
-                <i class="fa fa-user"></i>
-                <span><a href="{% url 'rango:reviews' review.user %}">{{ review.user }}</a></span>
+        {% for review in review_page %}
+          <div class="review-item">
+            <div class="d-flex">
+              <div class="film">
+                <img class="" src="{{ MEDIA_URL }}movie_covers/{{ review.movie.imdb_id }}.jpg" alt="movie cover">
+              </div>
+              <div class="short-content pl-4">
+                <h5>
+                  <i class="fa fa-user"></i>
+                  <span><a href="{% url 'rango:reviews' review.user %}">{{ review.user }}</a></span>
                   <span class="ml-3 cr1">&nbsp{{ review.rating }}</span>
                   <span class="ml-3 time">{{ review.time }}</span>
                 </h5>
