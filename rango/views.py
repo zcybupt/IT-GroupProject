@@ -266,7 +266,6 @@ def add_movie_review(request, movie_id):
                 'success': True,
                 'review_id': review.id,
                 'rating': rating,
-                'review_time': str(review_time),
                 'username': request.user.username
             }),
             content_type='application/json'

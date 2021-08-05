@@ -117,9 +117,9 @@
                       </div>
                     </div>
                     <div class="response">
-                      <a class="fabulous" href="javascript:void(0)">
+                      <a class="fabulous" onclick="like({{ review.id }})" href="javascript:void(0)">
                         <i class="fa fa-thumbs-o-up" style="font-family: FontAwesome;"></i>
-                        <span id="{{ review.id }}" onclick="like({{ review.id }})">{{ review.likes }}</span>
+                        <span id="{{ review.id }}">{{ review.likes }}</span>
                       </a>
                     </div>
                   </div>

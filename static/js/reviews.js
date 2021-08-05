@@ -22,7 +22,10 @@ function like(reviewId) {
     let likeEle = $('#' + reviewId);
     let likedReviews = localStorage.getItem("likedReviews");
 
-    if (likedReviews && likedReviews.indexOf(reviewId) > -1) {return;}
+    if (likedReviews) {
+      let likedReviewList = likedReviews.split(",");
+      if (likedReviewList.indexOf(String(reviewId)) > -1) return;
+    }
 
     $.ajax({
       url: '/rango/reviews/like/',
@@ -82,9 +85,9 @@ function postComment(movieId) {
         +    '<div class="short-content pl-4">'
         +      '<h5>'
         +        '<i class="fa fa-user"></i>'
-        +        '<span>' + data["username"] + '</span>'
+        +        '<span>&nbsp' + data["username"] + '</span>'
         +        '<span class="ml-3 cr1">&nbsp' + data["rating"] + '</span>'
-        +        '<span class="ml-3 time">' + data["review_time"] + '</span>'
+        +        '<span class="ml-3 time">Just now</span>'
         +      '<h5>'
         +      '<h4 class="cr1">' + titleBox.val() + '</h4>'
         +      '<div class="more">'
@@ -92,9 +95,9 @@ function postComment(movieId) {
         +          '<div class="text">' + textBox.val() + '<div>'
         +        '<div>'
         +        '<div class="response">'
-        +          '<a class="fabulous" href="javascript:void(0)">'
+        +          '<a class="fabulous"  onClick="like(' + data["review_id"] + ')" href="javascript:void(0)">'
         +            '<i class="fa fa-thumbs-o-up" style="font-family: FontAwesome;"></i>'
-        +            '<span id="' + data["review_id"] + '" onClick="like(' + data["review_id"] + ')">0</span>'
+        +            '<span id="' + data["review_id"] + '">0</span>'
         +          '<a>'
         +        '<div>'
         +      '<div>'
