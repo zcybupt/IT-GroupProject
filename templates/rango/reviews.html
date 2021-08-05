@@ -11,7 +11,7 @@
 
 {% block body_block %}
   <div class="review-body">
-    <div class="display-4">Most Popular Reviews</div>
+    <div class="display-4">Popular Reviews</div>
 
     {% if review_page %}
       <div class="container review">
@@ -24,7 +24,7 @@
             <div class="short-content pl-4">
               <h5>
                 <i class="fa fa-user"></i>
-                <span>{{ review.user }}</span>
+                <span><a href="{% url 'rango:reviews' review.user %}">{{ review.user }}</a></span>
 
                 <span class="ml-3 cr1">&nbsp{{ review.rating }}</span>
                 <span class="ml-3 time">{{ review.time }}</span>
