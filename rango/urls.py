@@ -24,6 +24,8 @@ urlpatterns = [
     path('genres/', views.get_movies_by_genre, name='genres'),
     path('genres/<str:genre>/', views.get_movies_by_genre, name='genres'),
     path('genres/<str:genre>/<int:page>/', views.get_movies_by_genre, name='genres'),
+    path('reviews/', views.get_popular_reviews, name='popular_reviews'),
     path('reviews/popular/', views.get_popular_reviews, name='popular_reviews'),
     path('reviews/popular/<int:page>', views.get_popular_reviews, name='popular_reviews'),
+    path('reviews/like/', views.like_review, name='like_review'),
 ]
