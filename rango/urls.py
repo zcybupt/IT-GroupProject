@@ -1,6 +1,5 @@
 from django.urls import path
 from rango import views
-
 app_name = 'rango'
 
 urlpatterns = [
@@ -24,8 +23,12 @@ urlpatterns = [
     path('genres/', views.get_movies_by_genre, name='genres'),
     path('genres/<str:genre>/', views.get_movies_by_genre, name='genres'),
     path('genres/<str:genre>/<int:page>/', views.get_movies_by_genre, name='genres'),
+
     path('reviews/', views.get_popular_reviews, name='popular_reviews'),
     path('reviews/popular/', views.get_popular_reviews, name='popular_reviews'),
     path('reviews/popular/<int:page>', views.get_popular_reviews, name='popular_reviews'),
     path('reviews/like/', views.like_review, name='like_review'),
+    path('reviews/<str:user_name>/', views.get_reviews_by_user, name='reviews'),
+    path('reviews/<str:user_name>/<int:page>/', views.get_reviews_by_user, name='reviews_page'),
+    # path('reviews', views.get_reviews_by_user, name='reviews')
 ]
