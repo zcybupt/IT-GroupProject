@@ -1,0 +1,81 @@
+{% extends 'rango/base.html' %}
+{% load staticfiles %}
+
+{% block body_block %}
+
+
+genres = [
+    'Action', 'Adventure', 'Animation', 'Biography', 'Comedy', 'Crime', 'Documentary', 'Drama', 'Family', 'Fantasy',
+    'Film Noir', 'History', 'Horror', 'Music', 'Musical', 'Mystery', 'Romance', 'Sci-Fi', 'Short Film', 'Sport',
+    'Superhero', 'Thriller', 'War', 'Western'
+]
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Static Template</title>
+  </head>
+  <body>
+    <h1>
+      All movie genres
+    </h1>
+    <div style="width: 1000px; height: 200px; display: flex;">
+      <div
+        style="
+          flex-shrink: 0;
+          width: 460px;
+          height: 200px;
+          background-color: grey;
+          border-radius: 2px;
+          margin-right: 10px;
+	  margin-top: 10px;
+        "
+      >
+        <a></a>
+      </div>
+      <div
+        style="
+          display: flex;
+          flex-wrap: wrap;
+          align-content: space-between;
+          justify-content: space-around;
+        "
+      >
+        <div class="小的视频">Action</div>
+        <div class="小的视频">Adventrue</div>
+        <div class="小的视频">Animation</div>
+        <div class="小的视频"></div>
+        <div class="小的视频"></div>
+	<div class="小的视频">test</div>
+        <div class="小的视频"></div>
+        <div class="小的视频"></div>
+        <div class="小的视频"></div>
+        <div class="小的视频"></div>
+        <div class="小的视频"></div>
+	<div class="小的视频">test</div>
+        <div class="小的视频"></div>
+        <div class="小的视频"></div>
+        <div class="小的视频"></div>
+        <div class="小的视频"></div>
+        <div class="小的视频"></div>       
+	<div class="小的视频"></div>
+      </div>
+    </div>
+    <style>
+      .小的视频 {
+        width: 170px;
+        height: 96px;
+        background-color: grey;
+        margin: 10px 10px;
+        line-height: 0;
+        border-radius: 2px;
+      }
+    </style>
+  </body>
+</html>
+
+
+{% endblock %}
