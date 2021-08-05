@@ -12,7 +12,7 @@ from rango.models import Genre, Movie, Review, UserProfile
 
 genres = [
     'Action', 'Adventure', 'Animation', 'Biography', 'Comedy', 'Crime', 'Documentary', 'Drama', 'Family', 'Fantasy',
-    'Film Noir', 'History', 'Horror', 'Music', 'Musical', 'Mystery', 'Romance', 'Sci-Fi', 'Short Film', 'Sport',
+    'Film Noir', 'History', 'Horror', 'Music', 'Musical', 'Mystery', 'Romance', 'Sci-Fi', 'Sport',
     'Superhero', 'Thriller', 'War', 'Western'
 ]
 
