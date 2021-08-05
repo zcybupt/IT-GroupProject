@@ -99,7 +99,7 @@
                 <div class="short-content pl-4">
                   <h5>
                     <i class="fa fa-user"></i>
-                    <span>{{ review.user }}</span>
+                    <span><a href="{% url 'rango:reviews' review.user %}">{{ review.user }}</a></span>
                     {% if review.rating != -1 %}
                       <span class="ml-3 cr1">&nbsp{{ review.rating }}</span>
                     {% endif %}
