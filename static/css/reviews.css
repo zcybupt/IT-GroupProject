@@ -3,11 +3,11 @@
 }
 
 .review .cr1 {
-    color: #37a;
+    color:lightslategray;
 }
 
 .review .cr2 {
-    color: #ffac2d !important;
+    color:moccasin;
 }
 
 .review .fa-star {
@@ -18,7 +18,10 @@
     border-top: 1px solid #ddd;
     padding: 20px 0;
 }
-
+.review .title{
+    font-size: 20px;
+    color: dimgrey;
+}
 .review .review-item img {
     max-width: 150px;
 }

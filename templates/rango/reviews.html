@@ -14,9 +14,9 @@
             <div class="short-content pl-4">
                 <h5 >
                     <i class="fa fa-user"></i>
-                    <span class="cr1">{{review.user}}</span>
+                    <span>{{review.user}}</span>
 
-                    <span class="ml-3 film-source">&nbsp{{ review.rating }}</span>
+                    <span class="ml-3 cr1">&nbsp{{ review.rating }}</span>
                     <span class="ml-3 time">{{review.time}}</span>
                 </h5>
                 <h4 class="cr1">{{review.title}}</h4>
@@ -34,7 +34,7 @@
                         <!-- <a href="#"> <i class="fa fa-caret-down"></i>  666</a> -->
                         <!-- <a href="#"> <i class="fa fa-caret-up"></i> 888</a> -->
                         <a class="fabulous" href="#">
-                            <i class="fa fa-thumbs-o-up"></i>
+                            <i class="fa fa-thumbs-o-up" style="font-family: FontAwesome;"></i>
                             <!-- {{review.likes}} -->
                             <span>{{review.likes}}</span>
                         </a>
@@ -59,10 +59,11 @@
             }
         })
         $('.unfold').on('click', e => {
+            e.preventDefault()
             $(e.target).parents('.text-wrap').removeClass('maxHeight').end().hide().siblings().show()
         })
         $('.put').on('click', e => {
-
+            e.preventDefault()
             $(e.target).parents('.text-wrap').addClass('maxHeight').end().hide().siblings().show()
         })
         $('.fabulous').on('click', function (e) {
