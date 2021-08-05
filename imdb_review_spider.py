@@ -46,7 +46,7 @@ i = IMDb()
 i.set_proxy(proxy)
 
 
-def get_resource_with_retry(url: str, times: int = 3) -> Response:
+def  get_resource_with_retry(url: str, times: int = 3) -> Response:
     if times == 0:
         res = Response()
         res.status_code = 500

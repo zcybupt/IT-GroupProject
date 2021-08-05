@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block body_block %}
-  <form class="form-signin">
+  <form class="form-signin" method="post" action="{% url 'rango:login' %}">
     {% csrf_token %}
     <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
     <label for="Username" class="sr-only">Username</label>

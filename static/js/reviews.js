@@ -18,21 +18,6 @@ $(document).ready(function () {
   })
 })
 
-function getCookie(name) {
-  let cookieValue = null;
-  if (document.cookie && document.cookie !== '') {
-    const cookies = document.cookie.split(';');
-    for (let i = 0; i < cookies.length; i++) {
-      const cookie = cookies[i].trim();
-      if (cookie.substring(0, name.length + 1) === (name + '=')) {
-        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-        break;
-      }
-    }
-  }
-  return cookieValue;
-}
-
 function like(reviewId) {
     let likeEle = $('#' + reviewId);
     let likedReviews = localStorage.getItem("likedReviews");
@@ -49,7 +34,6 @@ function like(reviewId) {
       data: JSON.stringify({'review_id': reviewId}),
       dataType: "json",
       success: function (data) {
-        console.log(data);
         if (data["success"]) {
           likeEle.html(data["likes"]);
           likedReviews = likedReviews + "," + reviewId;
@@ -59,3 +43,46 @@ function like(reviewId) {
   })
 }
 
+function postComment(movieId) {
+  let titleBox = $(".title-box");
+  if (!titleBox.val()) {
+    alert("Please enter your title!");
+    return;
+  }
+
+  let textBox = $(".text-box");
+  if (!textBox.val()) {
+    alert("Please enter your review!");
+    return;
+  }
+
+  let rating = $('input[name=rating]:checked').attr("id");
+  if (!rating) {
+    alert("Please rate this movie!");
+    return;
+  }
+
+  $.ajax({
+    url: "/rango/movies/" + movieId + "/review",
+    type: 'post',
+    headers: {
+      "X-CSRFToken": getCookie('csrftoken'),
+      "Content-Type": 'application/json',
+    },
+    data: JSON.stringify({
+      "title": titleBox.val(),
+      "content": textBox.val(),
+      "rating": rating
+    }),
+    dataType: "json",
+    success: function (data) {
+      if (data["success"]) {
+        console.log(data);
+      } else {
+        if (data["msg"] === "login required") {
+          window.location = "/rango/login";
+        }
+      }
+    }
+  })
+}
