@@ -6,20 +6,7 @@
 {% endblock %}
 
 {% block js_block %}
-  <script type="application/javascript">
-    $(document).ready(function () {
-      $('.movie-grid').each(function (){
-        let rating_ul = $(this).find(".rating");
-        let stars = $(this).find("#movie-stars").val();
-        for (let i = 0; i < stars; i++) {
-          rating_ul.append("<li class=\"fas fa-star\"></li>");
-        }
-        for (let i = 0; i < 5 - stars; i++) {
-          rating_ul.append("<li class=\"far fa-star\"></li>");
-        }
-      })
-    })
-  </script>
+  <script type="application/javascript" src="{% static 'js/movies.js' %}"></script>
 {% endblock %}
 
 {% block body_block %}
@@ -33,7 +20,7 @@
           <div class="movie-grid">
             <input id="movie-stars" hidden value="{% widthratio movie.rating 2 1 %}">
             <div class="movie-image">
-              <a href="#" class="image">
+              <a href="{% url 'rango:movie_detail' movie.id %}" class="image">
                 <img src="{{ MEDIA_URL }}movie_covers/{{ movie.imdb_id }}.jpg" alt="">
                 <div class="grid-info">
                   <ul class="rating"></ul>
@@ -44,7 +31,7 @@
               </a>
             </div>
             <div class="movie-content">
-              <h3 class="title"><a href="#">{{ movie.name }}</a></h3>
+              <h3 class="title"><a href="{% url 'rango:movie_detail' movie.id %}">{{ movie.name }}</a></h3>
             </div>
           </div>
         </div>

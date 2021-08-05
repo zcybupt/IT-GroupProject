@@ -105,6 +105,10 @@ def get_movie_info(imdb_id: str, times: int = 3) -> dict:
     genres = movie.get('genres')
     name = movie.get('title')
     description = movie.get('plot outline')
+    runtime = movie.get('runtime')
+    countries = movie.get('countries')
+    directors = [x.get('name') for x in movie.get('directors')]
+    actors = [x.get('name') for x in movie.get('actors')][:10]
     pic_url = movie.get('cover url')
     actual_pic_url = re.findall('(.*@).*', pic_url)
     pic_url = actual_pic_url[0] if actual_pic_url else pic_url
@@ -115,6 +119,10 @@ def get_movie_info(imdb_id: str, times: int = 3) -> dict:
         'imdb_id': imdb_id,
         'genres': genres,
         'name': name,
+        'runtime': runtime,
+        'countries': countries,
+        'directors': directors,
+        'actors': actors,
         'description': description,
         'pic_url': pic_url,
         'release_year': release_year,
@@ -158,5 +166,5 @@ def download_covers() -> None:
 
 
 if __name__ == '__main__':
-    # save_reviews_as_json()
+    save_reviews_as_json()
     download_covers()
