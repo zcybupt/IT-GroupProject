@@ -35,10 +35,13 @@
             <a class="nav-link" href="{% url 'rango:index' %}">Home <span class="sr-only">(current)</span></a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Genres</a>
+            <a class="nav-link" href="{% url 'rango:genres' %}">Genres</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{% url 'rango:top_movies' %}">Ranking</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'rango:latest_movies' %}">Latest</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#">Reviews</a>
