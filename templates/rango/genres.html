@@ -1,10 +1,30 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'rango/base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+  Genres
+{% endblock %}
+
+{% block body_block %}
+  <div class="genre-list">
+    <h1 class="display-4">MOVIE GENRES</h1>
+
+    <div class="row">
+      {% for genre in genres %}
+        <div class="col-md-3 col-sm-6">
+          <div class="genre-grid">
+            <div class="genre-image">
+              <a href="{% url 'rango:genres' %}{{ genre.slug }}" class="image">
+                <img src="{% static 'images/genres/' %}{{ genre.slug }}.jpg" alt="">
+              </a>
+            </div>
+            <div class="genre-content">
+              <h3 class="title"><a href="{% url 'rango:genres' %}{{ genre.slug }}">{{ genre.name }}</a></h3>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+  </div>
+{% endblock %}

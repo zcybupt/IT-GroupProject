@@ -204,4 +204,35 @@ body {
     color: white;
 }
 
-.movie-review
+.genre-list {
+    width: 70%;
+    overflow: hidden;
+    margin: 20px auto;
+}
+
+.genre-list .genre-grid {
+    margin-top: 20px;
+}
+
+.genre-list .genre-image img {
+    display: block;
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    transition: all 0.3s;
+}
+
+.genre-list .genre-content {
+    position: absolute;
+    top: 130px;
+    left: 25px;
+}
+
+.genre-list .genre-content a {
+    text-decoration: none;
+    color: white;
+}
+
+.movie-review {
+
+}

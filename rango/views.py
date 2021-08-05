@@ -253,7 +253,13 @@ def search_more_movies(request, keyword, page=1):
     return get_movie_list_response(request, results, page, 'RELATED MOVIES')
 
 
-def get_movies_by_genre(request, genre, page=1):
+def get_movies_by_genre(request, genre=None, page=1):
+
+    if not genre:
+        genres = Genre.objects.all()
+
+        return render(request, 'rango/genres.html', context={'genres': genres})
+
     movie_list = Movie.objects.filter(genres__contains=genre).order_by('-rating')
 
     return get_movie_list_response(request, movie_list, page, genre.upper() + ' MOVIES')
