@@ -210,6 +210,25 @@ def get_movie_list_response(request, data_list, page, list_title, url_prefix=Non
     })
 
 
+def get_movie(request, movie_id):
+    movie = Movie.objects.get(id=movie_id)
+    reviews = Review.objects.filter(movie=movie)
+
+    genres = movie.genres.split(',')
+    countries = movie.countries.replace(',', '/')
+    directors = movie.directors.replace(',', '/')
+    actors = movie.actors.replace(',', '/')
+
+    return render(request, 'rango/movie_detail.html', context={
+        'movie': movie,
+        'genres': genres,
+        'countries': countries,
+        'directors': directors,
+        'actors': actors,
+        'reviews': reviews
+    })
+
+
 def get_top_movies(request, page=1):
     all_movies = Movie.objects.filter().order_by('-rating')
     return get_movie_list_response(request, all_movies, page, 'TOP 250 MOVIES')
