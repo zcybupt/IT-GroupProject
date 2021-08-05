@@ -12,8 +12,6 @@ from django.urls import reverse
 from rango.forms import CategoryForm, PageForm, UserForm, UserProfileForm
 from rango.models import Category, Page, Genre, Movie, Review, UserProfile
 
-from datetime import datetime
-
 
 def index(request):
     carousel_movies = Movie.objects.all().order_by('-rating')[:5]
@@ -331,6 +329,64 @@ def get_popular_reviews(request, page=1):
     all_reviews = Review.objects.filter().order_by('-likes').filter()
     return get_review_list_response(request, all_reviews, page)
 
+def get_review_list_response(request, data_list, page, url_prefix=None):
+    p = Paginator(data_list, 12)
+    review_page = p.page(page)
+
+    if not url_prefix:
+        url_prefix = re.findall('(.*/)\d+', request.path)
+        url_prefix = url_prefix[0] if url_prefix else request.path
+
+    if p.num_pages > 11:
+        if page + 5 > p.num_pages:
+            page_range = range(p.num_pages - 10, p.num_pages + 1)
+        elif page - 5 < 1:
+            page_range = range(1, 12)
+        else:
+            page_range = range(page - 5, page + 5 + 1)
+    else:
+        page_range = p.page_range
+
+    return render(request, 'rango/reviews.html', context={
+        'review_page': review_page,
+        'page_range': page_range,
+        'current_page': page,
+        'url_prefix': url_prefix
+    })
+
+def get_user_review_list_response(request, data_list, page, user, url_prefix=None):
+    p = Paginator(data_list, 12)
+    review_page = p.page(page)
+
+    if not url_prefix:
+        url_prefix = re.findall('(.*/)\d+', request.path)
+        url_prefix = url_prefix[0] if url_prefix else request.path
+
+    if p.num_pages > 11:
+        if page + 5 > p.num_pages:
+            page_range = range(p.num_pages - 10, p.num_pages + 1)
+        elif page - 5 < 1:
+            page_range = range(1, 12)
+        else:
+            page_range = range(page - 5, page + 5 + 1)
+    else:
+        page_range = p.page_range
+
+    return render(request, 'rango/review_user.html', context={
+        'user': user,
+        'review_page': review_page,
+        'page_range': page_range,
+        'current_page': page,
+        'url_prefix': url_prefix
+    })
+def get_reviews_by_user(request, user_name, page=1):
+    # print(request.GET.get('user'))
+    # print(user_name)
+    #user = models.User.objects.get(username=user_name)
+    #all_reviews = Review.objects.filter(user=user_name).order_by('-time')
+    user = User.objects.filter(username=user_name).first()
+    all_reviews = Review.objects.filter(user=user).order_by('-time')
+    return get_user_review_list_response(request, all_reviews, page, user)
 
 def like_review(request):
     if request.method == 'POST' and request.body:
