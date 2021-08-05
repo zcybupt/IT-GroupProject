@@ -1,3 +1,4 @@
+import json
 import re
 
 from django.contrib.auth import authenticate, login, logout
@@ -250,7 +251,6 @@ def search_more_movies(request, keyword, page=1):
 
 
 def get_movies_by_genre(request, genre=None, page=1):
-
     if not genre:
         genres = Genre.objects.all()
 
@@ -279,7 +279,6 @@ def get_review_list_response(request, data_list, page, url_prefix=None):
     else:
         page_range = p.page_range
 
-
     return render(request, 'rango/reviews.html', context={
         'review_page': review_page,
         'page_range': page_range,
@@ -289,5 +288,28 @@ def get_review_list_response(request, data_list, page, url_prefix=None):
 
 
 def get_popular_reviews(request, page=1):
-    all_reviews = Review.objects.filter().order_by('-likes')
+    all_reviews = Review.objects.filter().order_by('-likes').filter()
     return get_review_list_response(request, all_reviews, page)
+
+
+def like_review(request):
+    if request.method == 'POST' and request.body:
+        data = json.loads(request.body)
+        review_id = data.get('review_id')
+
+        review = Review.objects.get(id=review_id)
+        review.likes = review.likes + 1
+        review.save()
+
+        return HttpResponse(
+            json.dumps({
+                'success': True,
+                'likes': review.likes
+            }),
+            content_type='application/json'
+        )
+    else:
+        return HttpResponse(
+            json.dumps({'success': False}),
+            content_type='application/json'
+        )
