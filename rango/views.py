@@ -1,16 +1,16 @@
 import json
 import re
+from datetime import datetime, timezone
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from rango.forms import CategoryForm, PageForm, UserForm, UserProfileForm
-from rango.models import Category, Page, Genre, Movie, Review
-from django.contrib.auth.models import User
-from datetime import datetime
+from rango.models import Category, Page, Genre, Movie, Review, UserProfile
 
 
 def index(request):
@@ -93,38 +93,24 @@ def add_page(request, category_name_slug):
 
 
 def register(request):
-    registered = False
-
     if request.method == 'POST':
-        user_form = UserForm(request.POST)
-        profile_form = UserProfileForm(request.POST)
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        email = request.POST.get('email')
 
-        if user_form.is_valid() and profile_form.is_valid():
-            user = user_form.save()
+        user = User.objects.create_user(
+            username=username,
+            email=email,
+            password=password
+        )
+        user.save()
 
-            user.set_password(user.password)
-            user.save()
+        profile = UserProfile.objects.create(user=user)
+        profile.save()
 
-            profile = profile_form.save(commit=False)
-            profile.user = user
-
-            if 'picture' in request.FILES:
-                profile.picture = request.FILES['picture']
-
-            profile.save()
-
-            registered = True
-        else:
-            print(user_form.errors, profile_form.errors)
+        return redirect(reverse('rango:login'))
     else:
-        user_form = UserForm()
-        profile_form = UserProfileForm()
-
-    return render(request, 'rango/register.html', context={
-        'user_form': user_form,
-        'profile_form': profile_form,
-        'registered': registered
-    })
+        return render(request, 'rango/register.html')
 
 
 def user_login(request):
@@ -180,13 +166,9 @@ def visitor_cookie_handler(request):
     request.session['visits'] = visits
 
 
-def get_movie_list_response(request, data_list, page, list_title, url_prefix=None):
+def get_paginator(data_list, page):
     p = Paginator(data_list, 12)
-    movie_page = p.page(page)
-
-    if not url_prefix:
-        url_prefix = re.findall('(.*/)\d+', request.path)
-        url_prefix = url_prefix[0] if url_prefix else request.path
+    paginator = p.page(page)
 
     if p.num_pages > 11:
         if page + 5 > p.num_pages:
@@ -198,23 +180,38 @@ def get_movie_list_response(request, data_list, page, list_title, url_prefix=Non
     else:
         page_range = p.page_range
 
+    return page_range, paginator
+
+
+def get_movie_list_response(request, data_list, page, list_title, url_prefix=None):
+    page_range, paginator = get_paginator(data_list, page)
+
+    if not url_prefix:
+        url_prefix = re.findall('(.*/)\d+', request.path)
+        url_prefix = url_prefix[0] if url_prefix else request.path
+
     return render(request, 'rango/movie.html', context={
         'list_title': list_title,
-        'movie_page': movie_page,
+        'movie_page': paginator,
         'page_range': page_range,
         'current_page': page,
         'url_prefix': url_prefix
     })
 
 
-def get_movie(request, movie_id):
+def get_movie(request, movie_id, page=1):
     movie = Movie.objects.get(id=movie_id)
-    reviews = Review.objects.filter(movie=movie)
+    reviews = Review.objects.filter(movie=movie).order_by('-likes')
 
     genres = movie.genres.split(',')
     countries = movie.countries.replace(',', '/')
     directors = movie.directors.replace(',', '/')
     actors = movie.actors.replace(',', '/')
+
+    page_range, paginator = get_paginator(reviews, page)
+
+    res = re.findall('\d+', request.path)
+    url_prefix = '/rango/movies/%s/' % res[0]
 
     return render(request, 'rango/movie_detail.html', context={
         'movie': movie,
@@ -222,8 +219,60 @@ def get_movie(request, movie_id):
         'countries': countries,
         'directors': directors,
         'actors': actors,
-        'reviews': reviews
+        'review_page': paginator,
+        'page_range': page_range,
+        'current_page': page,
+        'url_prefix': url_prefix
     })
+
+
+def add_movie_review(request, movie_id):
+    if not request.user.username:
+        return HttpResponse(
+            json.dumps({
+                'success': False,
+                'msg': 'login required'
+            }),
+            content_type='application/json'
+        )
+
+    if request.method == 'POST' and request.body:
+        data = json.loads(request.body)
+        movie = Movie.objects.get(id=movie_id)
+
+        title = data.get('title')
+        content = data.get('content')
+        rating = data.get('rating')
+        review_time = datetime.now(tz=timezone.utc)
+
+        rating = 2 * int(re.findall('\d', rating)[0])
+
+        review = Review.objects.create(
+            movie=movie,
+            user=request.user,
+            title=title,
+            content=content,
+            time=review_time,
+            likes=0,
+            rating=rating
+        )
+
+        review.save()
+
+        return HttpResponse(
+            json.dumps({
+                'success': True,
+                'review_id': review.id,
+                'rating': rating,
+                'username': request.user.username
+            }),
+            content_type='application/json'
+        )
+    else:
+        return HttpResponse(
+            json.dumps({'success': False}),
+            content_type='application/json'
+        )
 
 
 def get_top_movies(request, page=1):
@@ -262,25 +311,14 @@ def get_movies_by_genre(request, genre=None, page=1):
 
 
 def get_review_list_response(request, data_list, page, url_prefix=None):
-    p = Paginator(data_list, 12)
-    review_page = p.page(page)
+    page_range, paginator = get_paginator(data_list, page)
 
     if not url_prefix:
         url_prefix = re.findall('(.*/)\d+', request.path)
         url_prefix = url_prefix[0] if url_prefix else request.path
 
-    if p.num_pages > 11:
-        if page + 5 > p.num_pages:
-            page_range = range(p.num_pages - 10, p.num_pages + 1)
-        elif page - 5 < 1:
-            page_range = range(1, 12)
-        else:
-            page_range = range(page - 5, page + 5 + 1)
-    else:
-        page_range = p.page_range
-
     return render(request, 'rango/reviews.html', context={
-        'review_page': review_page,
+        'review_page': paginator,
         'page_range': page_range,
         'current_page': page,
         'url_prefix': url_prefix

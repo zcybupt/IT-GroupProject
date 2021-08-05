@@ -18,26 +18,14 @@ $(document).ready(function () {
   })
 })
 
-function getCookie(name) {
-  let cookieValue = null;
-  if (document.cookie && document.cookie !== '') {
-    const cookies = document.cookie.split(';');
-    for (let i = 0; i < cookies.length; i++) {
-      const cookie = cookies[i].trim();
-      if (cookie.substring(0, name.length + 1) === (name + '=')) {
-        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-        break;
-      }
-    }
-  }
-  return cookieValue;
-}
-
 function like(reviewId) {
     let likeEle = $('#' + reviewId);
     let likedReviews = localStorage.getItem("likedReviews");
 
-    if (likedReviews && likedReviews.indexOf(reviewId) > -1) {return;}
+    if (likedReviews) {
+      let likedReviewList = likedReviews.split(",");
+      if (likedReviewList.indexOf(String(reviewId)) > -1) return;
+    }
 
     $.ajax({
       url: '/rango/reviews/like/',
@@ -49,7 +37,6 @@ function like(reviewId) {
       data: JSON.stringify({'review_id': reviewId}),
       dataType: "json",
       success: function (data) {
-        console.log(data);
         if (data["success"]) {
           likeEle.html(data["likes"]);
           likedReviews = likedReviews + "," + reviewId;
@@ -59,3 +46,71 @@ function like(reviewId) {
   })
 }
 
+function postComment(movieId) {
+  let titleBox = $(".title-box");
+  if (!titleBox.val()) {
+    alert("Please enter your title!");
+    return;
+  }
+
+  let textBox = $(".text-box");
+  if (!textBox.val()) {
+    alert("Please enter your review!");
+    return;
+  }
+
+  let rating = $('input[name=rating]:checked').attr("id");
+  if (!rating) {
+    alert("Please rate this movie!");
+    return;
+  }
+
+  $.ajax({
+    url: "/rango/movies/" + movieId + "/review",
+    type: 'post',
+    headers: {
+      "X-CSRFToken": getCookie('csrftoken'),
+      "Content-Type": 'application/json',
+    },
+    data: JSON.stringify({
+      "title": titleBox.val(),
+      "content": textBox.val(),
+      "rating": rating
+    }),
+    dataType: "json",
+    success: function (data) {
+      if (data["success"]) {
+        let newComment = '<div class="review-item">'
+        +  '<div class="d-flex">'
+        +    '<div class="short-content pl-4">'
+        +      '<h5>'
+        +        '<i class="fa fa-user"></i>'
+        +        '<span>&nbsp' + data["username"] + '</span>'
+        +        '<span class="ml-3 cr1">&nbsp' + data["rating"] + '</span>'
+        +        '<span class="ml-3 time">Just now</span>'
+        +      '<h5>'
+        +      '<h4 class="cr1">' + titleBox.val() + '</h4>'
+        +      '<div class="more">'
+        +        '<div class="text-wrap">'
+        +          '<div class="text">' + textBox.val() + '<div>'
+        +        '<div>'
+        +        '<div class="response">'
+        +          '<a class="fabulous"  onClick="like(' + data["review_id"] + ')" href="javascript:void(0)">'
+        +            '<i class="fa fa-thumbs-o-up" style="font-family: FontAwesome;"></i>'
+        +            '<span id="' + data["review_id"] + '">0</span>'
+        +          '<a>'
+        +        '<div>'
+        +      '<div>'
+        +    '<div>'
+        +  '<div>'
+        +'<div>'
+
+        $(newComment).prependTo('.review');
+      } else {
+        if (data["msg"] === "login required") {
+          window.location = "/rango/login";
+        }
+      }
+    }
+  })
+}
