@@ -13,18 +13,14 @@ from datetime import datetime
 
 
 def index(request):
-    category_list = Category.objects.order_by('-likes')[:5]
-    page_list = Page.objects.order_by('-views')[:5]
+    carousel_movies = Movie.objects.all().order_by('-rating')[:5]
 
-    context_dict = {
-        'boldmessage': 'Crunchy, creamy, cookie, candy, cupcake!',
-        'categories': category_list,
-        'pages': page_list
-    }
+    editor_picks = Movie.objects.all().order_by('-release_year')[:6]
 
-    visitor_cookie_handler(request)
-
-    return render(request, 'rango/index.html', context=context_dict)
+    return render(request, 'rango/index.html', context={
+        'carousel_movies': carousel_movies,
+        'editor_picks': editor_picks
+    })
 
 
 def about(request):
