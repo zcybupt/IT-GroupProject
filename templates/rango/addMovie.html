@@ -1,0 +1,35 @@
+{% extends 'rango/base.html' %}
+{% load staticfiles %}
+
+{% block body_block %}
+
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" type="text/css">
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <title>Add new movie</title>
+</head>
+<body>
+<h1 class="h3 mb-3 font-weight-normal">Add new movie</h1>
+<div class="container">
+    <form action="" method="post" name="addMovie">
+        {% csrf_token %}
+        <div class="form-group">
+            <label>Movie name</label>
+            <input type="text" class="form-control" value="{{ movie.name }}" name="name" placeholder="Movie's name">
+        </div>
+        <div class="form-group">
+            <label>Introduction</label>
+            <input type="text" class="form-control" value="{{ movie.description }}" name="description" placeholder="description">
+        </div>
+        <div class="form-group">
+            <label>IMDB ID</label>
+            <input type="text" class="form-control" value="{{ movie.imdb_id }}" name="imdb_id" placeholder="imdb_id">
+        </div>
+        <input class="btn btn-success" type="submit" value="submit">
+    </form>
+</div>
+</body>
+</html>
+{% endblock %}
