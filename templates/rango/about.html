@@ -2,31 +2,20 @@
 {% load staticfiles %}
 
 {% block title_block %}
-  About Rango
+  About The Waves
 {% endblock %}
 
 {% block body_block %}
-{#  <div style="text-align: center;">#}
-{#    <img src="{% static 'images/logo.jpg' %}" width="150px" alt="Picture of Rango"/>#}
-
-{#  </div>#}
-  <div class="genre-list" style="text-align: center">
+  <div class="about-page">
+    <div class="about-logo">
       <img src="{% static 'images/logo.jpg' %}" width="300px" alt="Picture of Rango"/>
       <h1 class="display-4">About Us</h1><br/>
-      </div>
-  <div class="about">
-      The Waves is a movie review website for movie lovers.
-        Users can comment on their favorite movies here,
-        and find excellent movies through the reviews of others.<br/>
-        Now, start your journey of film exploration!<br/>
     </div>
-</br>
-
-
-{#<div class="genre-list" style="text-align: center">#}
-{#  <img src="{% static 'images/logo.jpg' %}" width="300px" alt="Picture of Rango"/>#}
-{#  </div>>#}
-
-
-
+    <div class="about">
+      A movie review website for movie lovers.<br/>
+      You can comment on your favorite movies,<br/>
+      and find excellent movies through the reviews of others.<br/>
+      Now, start your journey of film!<br/>
+    </div>
+  </div>
 {% endblock %}

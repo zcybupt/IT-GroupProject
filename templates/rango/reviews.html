@@ -6,6 +6,7 @@
 {% endblock %}
 
 {% block js_block %}
+  <script src="{% static 'js/rango.js' %}" type="application/javascript"></script>
   <script src="{% static 'js/reviews.js' %}" type="application/javascript"></script>
 {% endblock %}
 
@@ -19,7 +20,9 @@
           <div class="review-item">
             <div class="d-flex">
               <div class="film">
-                <img class="" src="{{ MEDIA_URL }}movie_covers/{{ review.movie.imdb_id }}.jpg" alt="movie cover">
+                <a href="{% url 'rango:movie_detail' %}{{ review.movie.id }}">
+                  <img class="" src="{{ MEDIA_URL }}movie_covers/{{ review.movie.imdb_id }}.jpg" alt="movie cover">
+                </a>
               </div>
               <div class="short-content pl-4">
                 <h5>

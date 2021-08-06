@@ -213,6 +213,8 @@ def get_movie(request, movie_id, page=1):
     res = re.findall('\d+', request.path)
     url_prefix = '/rango/movies/%s/' % res[0]
 
+    print(request.user.username)
+
     return render(request, 'rango/movie_detail.html', context={
         'movie': movie,
         'genres': genres,
@@ -222,7 +224,8 @@ def get_movie(request, movie_id, page=1):
         'review_page': paginator,
         'page_range': page_range,
         'current_page': page,
-        'url_prefix': url_prefix
+        'url_prefix': url_prefix,
+        'is_logged_in': request.user.username != ''
     })
 
 
@@ -339,6 +342,15 @@ def get_reviews_by_user(request, user_name, page=1):
 
 
 def like_review(request):
+    if not request.user.username:
+        return HttpResponse(
+            json.dumps({
+                'success': False,
+                'msg': 'login required'
+            }),
+            content_type='application/json'
+        )
+
     if request.method == 'POST' and request.body:
         data = json.loads(request.body)
         review_id = data.get('review_id')

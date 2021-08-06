@@ -12,6 +12,8 @@ urlpatterns = [
     path('login/', views.user_login, name='login'),
     path('restricted/', views.restricted, name='restricted'),
     path('logout/', views.user_logout, name='logout'),
+
+    path('movies/', views.get_movie, name='movie_detail'),
     path('movies/<int:movie_id>/', views.get_movie, name='movie_detail'),
     path('movies/<int:movie_id>/<int:page>', views.get_movie, name='movie_detail'),
     path('movies/<int:movie_id>/review', views.add_movie_review, name='add_movie_review'),
@@ -22,6 +24,7 @@ urlpatterns = [
     path('movies/search/', views.search_movies, name='movie_search'),
     path('movies/search/<str:keyword>/', views.search_more_movies, name='movie_search'),
     path('movies/search/<str:keyword>/<int:page>/', views.search_more_movies, name='movie_search'),
+
     path('genres/', views.get_movies_by_genre, name='genres'),
     path('genres/<str:genre>/', views.get_movies_by_genre, name='genres'),
     path('genres/<str:genre>/<int:page>/', views.get_movies_by_genre, name='genres'),
@@ -32,5 +35,4 @@ urlpatterns = [
     path('reviews/like/', views.like_review, name='like_review'),
     path('reviews/<str:user_name>/', views.get_reviews_by_user, name='reviews'),
     path('reviews/<str:user_name>/<int:page>/', views.get_reviews_by_user, name='reviews_page'),
-    # path('reviews', views.get_reviews_by_user, name='reviews')
 ]
