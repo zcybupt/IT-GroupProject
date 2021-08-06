@@ -19,34 +19,49 @@ $(document).ready(function () {
 })
 
 function like(reviewId) {
-    let likeEle = $('#' + reviewId);
-    let likedReviews = localStorage.getItem("likedReviews");
+  let csrfToken = getCookie('csrftoken');
+  if (!csrfToken) {
+    window.location = "/rango/login";
+    return;
+  }
 
-    if (likedReviews) {
-      let likedReviewList = likedReviews.split(",");
-      if (likedReviewList.indexOf(String(reviewId)) > -1) return;
-    }
+  let likeEle = $('#' + reviewId);
+  let likedReviews = localStorage.getItem("likedReviews");
 
-    $.ajax({
-      url: '/rango/reviews/like/',
-      type: 'post',
-      headers: {
-        "X-CSRFToken": getCookie('csrftoken'),
-        "Content-Type": 'application/json',
-      },
-      data: JSON.stringify({'review_id': reviewId}),
-      dataType: "json",
-      success: function (data) {
-        if (data["success"]) {
-          likeEle.html(data["likes"]);
-          likedReviews = likedReviews + "," + reviewId;
-          localStorage.setItem("likedReviews", likedReviews);
+  if (likedReviews) {
+    let likedReviewList = likedReviews.split(",");
+    if (likedReviewList.indexOf(String(reviewId)) > -1) return;
+  }
+
+  $.ajax({
+    url: '/rango/reviews/like/',
+    type: 'post',
+    headers: {
+      "X-CSRFToken": csrfToken,
+      "Content-Type": 'application/json',
+    },
+    data: JSON.stringify({'review_id': reviewId}),
+    dataType: "json",
+    success: function (data) {
+      if (data["success"]) {
+        likeEle.html(data["likes"]);
+        likedReviews = likedReviews + "," + reviewId;
+        localStorage.setItem("likedReviews", likedReviews);
+      } else {
+        if (data["msg"] === "login required") {
+          window.location = "/rango/login";
         }
       }
+    }
   })
 }
 
-function postComment(movieId) {
+function postComment(movieId, isLoggedIn) {
+  if (isLoggedIn === 'False' || !getCookie('csrftoken')) {
+    window.location = "/rango/login";
+    return;
+  }
+
   let titleBox = $(".title-box");
   if (!titleBox.val()) {
     alert("Please enter your title!");
@@ -81,29 +96,29 @@ function postComment(movieId) {
     success: function (data) {
       if (data["success"]) {
         let newComment = '<div class="review-item">'
-        +  '<div class="d-flex">'
-        +    '<div class="short-content pl-4">'
-        +      '<h5>'
-        +        '<i class="fa fa-user"></i>'
-        +        '<span>&nbsp' + data["username"] + '</span>'
-        +        '<span class="ml-3 cr1">&nbsp' + data["rating"] + '</span>'
-        +        '<span class="ml-3 time">Just now</span>'
-        +      '<h5>'
-        +      '<h4 class="cr1">' + titleBox.val() + '</h4>'
-        +      '<div class="more">'
-        +        '<div class="text-wrap">'
-        +          '<div class="text">' + textBox.val() + '<div>'
-        +        '<div>'
-        +        '<div class="response">'
-        +          '<a class="fabulous"  onClick="like(' + data["review_id"] + ')" href="javascript:void(0)">'
-        +            '<i class="fa fa-thumbs-o-up" style="font-family: FontAwesome;"></i>'
-        +            '<span id="' + data["review_id"] + '">0</span>'
-        +          '<a>'
-        +        '<div>'
-        +      '<div>'
-        +    '<div>'
-        +  '<div>'
-        +'<div>'
+          + '<div class="d-flex">'
+          + '<div class="short-content pl-4">'
+          + '<h5>'
+          + '<i class="fa fa-user"></i>'
+          + '<span>&nbsp' + data["username"] + '</span>'
+          + '<span class="ml-3 cr1">&nbsp' + data["rating"] + '</span>'
+          + '<span class="ml-3 time">Just now</span>'
+          + '<h5>'
+          + '<h4 class="cr1">' + titleBox.val() + '</h4>'
+          + '<div class="more">'
+          + '<div class="text-wrap">'
+          + '<div class="text">' + textBox.val() + '<div>'
+          + '<div>'
+          + '<div class="response">'
+          + '<a class="fabulous"  onClick="like(' + data["review_id"] + ')" href="javascript:void(0)">'
+          + '<i class="fa fa-thumbs-o-up" style="font-family: FontAwesome;"></i>'
+          + '<span id="' + data["review_id"] + '">0</span>'
+          + '<a>'
+          + '<div>'
+          + '<div>'
+          + '<div>'
+          + '<div>'
+          + '<div>'
 
         $(newComment).prependTo('.review');
       } else {
