@@ -439,3 +439,11 @@ body {
     position: relative;
     top: 2px;
 }
+.about {
+    font-family: 'Open Sans', sans-serif;
+    text-align: center;
+    padding:0px 370px;
+    font-size: 20px;
+}
+
+
