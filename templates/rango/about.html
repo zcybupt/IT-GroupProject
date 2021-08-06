@@ -6,17 +6,27 @@
 {% endblock %}
 
 {% block body_block %}
-  <h1>Rango says...</h1>
-  <div>
-    here is the about page.<br/>
-    <strong>This tutorial has been put together by Chunyu ZHAO</strong><br/>
-  </div>
+{#  <div style="text-align: center;">#}
+{#    <img src="{% static 'images/logo.jpg' %}" width="150px" alt="Picture of Rango"/>#}
 
-  <h3>Visits: {{ visits }}</h3>
+{#  </div>#}
+  <div class="genre-list" style="text-align: center">
+      <img src="{% static 'images/logo.jpg' %}" width="300px" alt="Picture of Rango"/>
+      <h1 class="display-4">About Us</h1><br/>
+      </div>
+  <div class="about">
+      The Waves is a movie review website for movie lovers.
+        Users can comment on their favorite movies here,
+        and find excellent movies through the reviews of others.<br/>
+        Now, start your journey of film exploration!<br/>
+    </div>
+</br>
 
-  <div>
-    <img src="{% static 'images/rango.jpg' %}" alt="Picture of Rango"/>
-    <img src="{{ MEDIA_URL }}cat.jpg" alt="Picture of a Cat."/>
-  </div>
+
+{#<div class="genre-list" style="text-align: center">#}
+{#  <img src="{% static 'images/logo.jpg' %}" width="300px" alt="Picture of Rango"/>#}
+{#  </div>>#}
+
+
 
 {% endblock %}
