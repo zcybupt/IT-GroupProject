@@ -38,7 +38,8 @@ top_250_list = [
 
 review_url = 'https://www.imdb.com/title/tt%s/reviews'
 
-proxy = 'http://127.0.0.1:7890'
+# proxy = 'http://127.0.0.1:7890'
+proxy = None
 
 proxies = {'http': proxy, 'https': proxy}
 
@@ -46,7 +47,7 @@ i = IMDb()
 i.set_proxy(proxy)
 
 
-def  get_resource_with_retry(url: str, times: int = 3) -> Response:
+def get_resource_with_retry(url: str, times: int = 3) -> Response:
     if times == 0:
         res = Response()
         res.status_code = 500
@@ -148,12 +149,14 @@ def save_reviews_as_json() -> None:
             f.write(json_str + '\n')
 
 
-def download_covers() -> None:
+def download_covers(limit: int = None) -> None:
     if not os.path.exists('media/movie_covers'):
         os.makedirs('media/movie_covers')
 
     with open('imdb_top250.json', 'r') as f:
-        for line in f:
+        for idx, line in enumerate(f):
+            if limit and idx == limit:
+                break
             jo = json.loads(line)
             imdb_id = jo.get('imdb_id')
             pic_url = jo.get('pic_url')
