@@ -2,6 +2,7 @@ import os
 import django
 import json
 from datetime import datetime, timezone
+from imdb_review_spider import download_covers
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'tango_with_django_project.settings')
 
@@ -64,14 +65,16 @@ def add_review(movie, user, title, content, time, likes, rating):
     review.save()
 
 
-def populate_data():
+def populate_data(limit=None):
     # populate genres
     for genre in genres:
         add_genre(genre)
 
     # populate users, movies, reviews
     with open('imdb_top250.json', 'r') as f:
-        for line in f:
+        for i, line in enumerate(f):
+            if limit and i == limit:
+                break
             jo = json.loads(line)
             print('adding: %s' % jo.get('name'))
             movie = add_movie(
@@ -103,4 +106,16 @@ def populate_data():
 
 
 if __name__ == '__main__':
-    populate_data()
+    print('** It will take a very time to populate all the data. **')
+    print('Do you want to fill in only 30 pieces of data instead?')
+    print('y: 30 pieces\nn: all the data')
+    res = input('Your choice: ')
+    if res == 'y':
+        populate_data(30)
+        download_covers(30)
+    elif res == 'n':
+        populate_data()
+        download_covers()
+    else:
+        print('Incorrect input.')
+        exit(0)
